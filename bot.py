@@ -33,7 +33,7 @@ def get_response(user_input: str) -> str:
   if 'tonight' in lowered:
     return '<@&1232355460674355260>'
   else:
-    return choice(['Light work, no reaction', 'I\'m over it', 'I have no general interest.'])
+    return "Please type \"tonight\" to return the embed."
 
 async def send_message(message: Message, user_message: str) -> None:
   if not user_message:
