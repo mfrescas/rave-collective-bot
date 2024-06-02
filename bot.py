@@ -3,13 +3,18 @@ from discord import Client, Intents, Message, Embed
 from random import choice
 import api
 import event
-import venue_list
+from venue_list import venue_list
 
 # Set-Up
 TOKEN = os.environ['DISCORD_TOKEN']
 intents: Intents = Intents.default()
 intents.message_content = True
 client: Client = Client(intents=intents)
+
+# Event Data for different venues
+venue_data: list = []
+for venue in venue_list:
+  venue_data.append(api.request(venue_list[venue][0]))
 
 # Start-Up
 @client.event
@@ -44,15 +49,13 @@ async def send_message(message: Message, user_message: str) -> None:
     if response[1].__contains__('@'):
       # Stereo Live Dallas Venue ID: 56848259
       # It'll Do Venue ID: 43512991
-
-      data = api.request(56848259)
       
-      events: tuple = tuple(event.populate([], data))
+      events: tuple = tuple(event.populate([], venue_data[0]))
       embed = Embed(
         title = events[0].event_name, 
         url = events[0].event_url, 
         description = (events[1].event_date + ' | ' + events[0].event_time),
-        color = 0xff0000
+        color = int(venue_list['Stereo-Live-Dallas'][2], 16)
       )
       embed.set_image(url = events[0].event_image)
       await message.channel.send(response, embed=embed)
