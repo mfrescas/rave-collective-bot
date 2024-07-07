@@ -19,6 +19,7 @@ def populate(events: list, data: dict):
       replace(' - Stereo Live Dallas', '')
     )
     
+    # if statement makes sure that parking passes "events" don't make it to the final array
     # This is only relevant to Stereo Live, so I don't see It'll Do events jumping to this if statement
     if event_name.startswith('Parking Pass'):
       continue

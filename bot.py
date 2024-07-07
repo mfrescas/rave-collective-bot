@@ -12,9 +12,13 @@ intents.message_content = True
 client: Client = Client(intents=intents)
 
 # Event Data for different venues
+# Please check venue_list.py for each venue's index
 venue_data: list = []
 for venue in venue_list:
-  venue_data.append(api.request(venue_list[venue][0]))
+  # Access Venue ID from each venue on venue_list.py and populate venue_data accordingly
+  venue_data.append(api.request(venue_list[venue][0])) 
+  
+events: tuple = tuple(event.populate([], venue_data[0])) # You can change the index in venue_data to access events for different venues
 
 # Start-Up
 @client.event
@@ -50,11 +54,10 @@ async def send_message(message: Message, user_message: str) -> None:
       # Stereo Live Dallas Venue ID: 56848259
       # It'll Do Venue ID: 43512991
       
-      events: tuple = tuple(event.populate([], venue_data[0]))
       embed = Embed(
         title = events[0].event_name, 
         url = events[0].event_url, 
-        description = (events[1].event_date + ' | ' + events[0].event_time),
+        description = (events[0].event_date + ' | ' + events[0].event_time),
         color = int(venue_list['Stereo-Live-Dallas'][2], 16)
       )
       embed.set_image(url = events[0].event_image)
