@@ -1,5 +1,3 @@
-# this is a test to show how github push and pull works
-
 # driver class
 # it's not really necessary on the final thing, just for replit to not throw a temper tantrum :)
 from bot import main
