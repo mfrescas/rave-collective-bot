@@ -30,13 +30,10 @@ async def on_ready() -> None:
   print(f'{client.user} is ready to rumble!')
   await is_there_event_today()  
 
-
-# This is where the magic happens (where you put your code)
 @client.event
 async def is_there_event_today():
   while True:
     for event in events:
-      # You can add logic here to check if the event is today
       if event.event_date == datetime.now().strftime('%B %d, %Y'):
         # create embed
         embed = Embed(
