@@ -2,11 +2,10 @@
 This repository should contain everything that you need to run the bot on your IDE. Just make sure no one else is testing it beforehand :)
 
 # How to test & run the bot
-1. Call main() from bot.py
-Right now, you can test the bot by sending "tonight" to the server
+1. Call main() from bot.py, the bot will send an embed to #general for Stereo Live
 
 # Things to do (in order of priority)
-- The bot should be able to detect if the current date conatains an event, and send a message about said event, without the need of user input
+- ~~The bot should be able to detect if the current date conatains an event, and send a message about said event, without the need of user input~~
 - Add the capability to handle different local venues
   - Right now we're working on implementing It'll Do. Its venue ID for API calls can be found in venue_list.py
   - It'd preferrable if these venues use EventBrite since there's a general implementation for venues that use that service already 

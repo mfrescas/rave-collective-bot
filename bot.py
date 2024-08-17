@@ -1,9 +1,10 @@
 import os
-from discord import Client, Intents, Message, Embed
-from random import choice
+from discord import Client, Intents, Embed
 import api
 import event
 from venue_list import venue_list
+from datetime import datetime
+import asyncio
 
 # Set-Up
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -16,59 +17,43 @@ client: Client = Client(intents=intents)
 venue_data: list = []
 for venue in venue_list:
   # Access Venue ID from each venue on venue_list.py and populate venue_data accordingly
-  venue_data.append(api.request(venue_list[venue][0])) 
-  
-events: tuple = tuple(event.populate([], venue_data[0])) # You can change the index in venue_data to access events for different venues
+  venue_data.append(api.request(venue_list[venue][0]))
+
+events: tuple = tuple(
+    event.populate([], venue_data[0])
+)  # You can change the index in venue_data to access events for different venues
+
 
 # Start-Up
 @client.event
 async def on_ready() -> None:
   print(f'{client.user} is ready to rumble!')
+  await is_there_event_today()  
 
-@client.event
-async def on_message(message: Message) -> None:
-  if message.author == client.user:
-    return
-  username: str = str(message.author)
-  user_message: str = str(message.content)
-  channel: str = str(message.channel)
-  print(f'{username} said: "{user_message}" ({channel})')
-  await send_message(message, user_message)
 
 # This is where the magic happens (where you put your code)
-def get_response(user_input: str) -> str:
-  lowered: str = user_input.lower()
-
-  if 'tonight' in lowered:
-    return '<@&1232355460674355260>'
-  else:
-    return "Please type \"tonight\" to return the embed."
-
-async def send_message(message: Message, user_message: str) -> None:
-  if not user_message:
-    print('Message was empty because intents were not enabled propbably')
-    return
-  try:
-    response: str = get_response(user_message)
-    if response[1].__contains__('@'):
-      # Stereo Live Dallas Venue ID: 56848259
-      # It'll Do Venue ID: 43512991
-      
-      embed = Embed(
-        title = events[0].event_name, 
-        url = events[0].event_url, 
-        description = (events[0].event_date + ' | ' + events[0].event_time),
-        color = int(venue_list['Stereo-Live-Dallas'][2], 16)
-      )
-      embed.set_image(url = events[0].event_image)
-      await message.channel.send(response, embed=embed)
-    else:
-      await message.channel.send(response)
-  except Exception as e:
-    print(e)
+@client.event
+async def is_there_event_today():
+  while True:
+    for event in events:
+      # You can add logic here to check if the event is today
+      if event.event_date == datetime.now().strftime('%B %d, %Y'):
+        # create embed
+        embed = Embed(
+          title = events[0].event_name, 
+          url = events[0].event_url, 
+          description = (events[0].event_date + ' | ' + events[0].event_time),
+          color = int(venue_list['Stereo-Live-Dallas'][2], 16)
+        )
+        embed.set_image(url = events[0].event_image)
+        embed.set_author(
+          name = 'TONIGHT @ STEREO LIVE DALLAS', 
+          icon_url = venue_list['Stereo-Live-Dallas'][3])
+        await client.get_channel(1232195766492336243).send(f'<@&1232355460674355260>', embed=embed)
+    await asyncio.sleep(3600) # sleep is measured in seconds (i think), 3600 seconds = 1 hour 
 
 def main() -> None:
   client.run(token=TOKEN)
-  
+
   if __name__ == '__main__':
     main()
